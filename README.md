@@ -39,6 +39,3 @@ The Globetrotter Challenge is a full-stack web app where users get cryptic clues
 - `GET /api/destinations`: Fetch all destinations.
 - `POST /api/destinations`: Add a new destination.
 - `POST /api/expand-dataset`: Expand the dataset using OpenAI API.
-
-## Contact
-For any questions or suggestions, feel free to contact me at [your-email@example.com].
