@@ -1,53 +1,44 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const { Configuration, OpenAIApi } = require('openai');
-require('dotenv').config();
+# The Globetrotter Challenge
 
-const app = express();
-const PORT = process.env.PORT || 5000;
+## Description
+The Globetrotter Challenge is a full-stack web app where users get cryptic clues about a famous place and must guess which destination it refers to. Once they guess, they’ll unlock fun facts, trivia, and surprises about the destination!
 
-app.use(cors());
-app.use(express.json());
+## Features
+- Present 1–2 random clues from the chosen destination.
+- Let the user select from multiple possible destination answers.
+- Provide immediate funky feedback after answering:
+  - Correct Answer: Animate confetti + reveal a fun fact.
+  - Incorrect Answer: Show a sad-face animation + reveal a fun fact.
+- Include a ‘Play Again’ or ‘Next’ button to load a different random destination.
+- Display total user score, tracking correct and incorrect answers.
+- “Challenge a Friend” feature: User enters a unique username before inviting friends to play. This registers the user with the system and creates their profile. Clicking ‘Challenge a Friend’ button should open a share popup with a dynamic image & invite link for WhatsApp. The invited friend can see the invitee’s score before playing.
 
-const openai = new OpenAIApi(new Configuration({
-  apiKey: process.env.OPENAI_API_KEY,
-}));
+## Tech Stack
+- Backend: Node.js, Express, MongoDB, OpenAI API
+- Frontend: React.js
+- Deployment: Heroku/Railway for backend, Vercel/Netlify for frontend
 
-mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+## Setup Instructions
+1. Clone the repository.
+2. Navigate to the backend directory and run `npm install`.
+3. Create a `.env` file in the backend directory and add the following environment variables:
+    ```
+    MONGODB_URI=your_mongodb_uri
+    OPENAI_API_KEY=your_openai_api_key
+    PORT=5000
+    ```
+4. Start the backend server with `npm start`.
+5. Navigate to the frontend directory and run `npm install`.
+6. Start the frontend server with `npm start`.
 
-const destinationSchema = new mongoose.Schema({
-  name: String,
-  clues: [String],
-  funFacts: [String],
-});
+## Deployment
+1. Deploy the backend on Heroku or Railway.
+2. Deploy the frontend on Vercel or Netlify.
 
-const Destination = mongoose.model('Destination', destinationSchema);
+## API Endpoints
+- `GET /api/destinations`: Fetch all destinations.
+- `POST /api/destinations`: Add a new destination.
+- `POST /api/expand-dataset`: Expand the dataset using OpenAI API.
 
-app.get('/api/destinations', async (req, res) => {
-  const destinations = await Destination.find();
-  res.json(destinations);
-});
-
-app.post('/api/destinations', async (req, res) => {
-  const { name, clues, funFacts } = req.body;
-  const destination = new Destination({ name, clues, funFacts });
-  await destination.save();
-  res.json(destination);
-});
-
-app.post('/api/expand-dataset', async (req, res) => {
-  const { prompt } = req.body;
-  const response = await openai.createCompletion({
-    model: 'text-davinci-003',
-    prompt: `Expand the following dataset of travel destinations with clues, fun facts, and trivia: ${prompt}`,
-    max_tokens: 1500,
-  });
-  const expandedData = JSON.parse(response.data.choices[0].text);
-  await Destination.insertMany(expandedData);
-  res.json({ message: 'Dataset expanded successfully' });
-});
-
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+## Contact
+For any questions or suggestions, feel free to contact me at [your-email@example.com].
